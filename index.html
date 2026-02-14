@@ -1,63 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Registration Form</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-    }
-    .form-container {
-      background: #fff;
-      padding: 30px;
-      max-width: 400px;
-      margin: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    input[type="submit"] {
-      background-color: #28a745;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-    }
-    input[type="submit"]:hover {
-      background-color: #218838;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Registration Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+  }
+  .form-container {
+    background: #fff;
+    padding: 30px;
+    max-width: 400px;
+    margin: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .error {
+    color: red;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .toggle-password {
+    cursor: pointer;
+    font-size: 13px;
+    color: #007bff;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  input[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+  }
+  input[type="submit"]:hover {
+    background-color: #218838;
+  }
+</style>
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>Register</h2>
-    <form action="/submit_registration" method="POST">
-      <label for="fullname">Full Name</label>
-      <input type="text" id="fullname" name="fullname" required>
+<div class="form-container">
+  <h2>Register</h2>
+  <form id="registrationForm" action="/submit_registration" method="POST">
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required>
+    <label for="fullname">Full Name</label>
+    <input type="text" id="fullname" name="fullname" required autocomplete="name">
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required autocomplete="email">
 
-      <label for="confirm">Confirm Password</label>
-      <input type="password" id="confirm" name="confirm" required>
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" 
+           placeholder="Enter 10-digit number" required autocomplete="tel">
+    <div class="error" id="phoneError"></div>
 
-      <input type="submit" value="Register">
-    </form>
-  </div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password"
+           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$"
+           title="Minimum 8 characters, at least 1 letter and 1 number"
+           required autocomplete="new-password">
+    <span class="toggle-password" onclick="togglePassword('password')">Show Password</span>
+
+    <label for="confirm">Confirm Password</label>
+    <input type="password" id="confirm" name="confirm" required autocomplete="new-password">
+    <span class="toggle-password" onclick="togglePassword('confirm')">Show Password</span>
+
+    <div class="error" id="passwordError"></div>
+
+    <label>
+      <input type="checkbox" required>
+      I agree to the Terms & Conditions
+    </label>
+
+    <br><br>
+    <input type="submit" value="Register">
+
+  </form>
+</div>
+
+<script>
+function togglePassword(fieldId) {
+  const field = document.getElementById(fieldId);
+  field.type = field.type === "password" ? "text" : "password";
+}
+
+document.getElementById("registrationForm").addEventListener("submit", function(e) {
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm").value;
+  const phone = document.getElementById("phone").value;
+
+  let valid = true;
+
+  document.getElementById("passwordError").innerText = "";
+  document.getElementById("phoneError").innerText = "";
+
+  if (password !== confirm) {
+    document.getElementById("passwordError").innerText = "Passwords do not match.";
+    valid = false;
+  }
+
+  if (!/^[0-9]{10}$/.test(phone)) {
+    document.getElementById("phoneError").innerText = "Enter valid 10-digit phone number.";
+    valid = false;
+  }
+
+  if (!valid) e.preventDefault();
+});
+</script>
 
 </body>
 </html>
