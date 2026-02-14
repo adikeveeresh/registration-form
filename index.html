@@ -37,7 +37,7 @@
     font-size: 13px;
     color: #007bff;
     margin-bottom: 10px;
-    display: inline-block;
+    display: block;
   }
   input[type="submit"] {
     background-color: #28a745;
@@ -51,34 +51,71 @@
   input[type="submit"]:hover {
     background-color: #218838;
   }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+  }
+  .modal-content {
+    background: #fff;
+    padding: 25px;
+    width: 300px;
+    margin: 15% auto;
+    border-radius: 8px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  .modal-content h3 {
+    color: #28a745;
+  }
+  .close-btn {
+    margin-top: 15px;
+    padding: 8px 15px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .close-btn:hover {
+    background: #218838;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+  }
 </style>
 </head>
 <body>
 
 <div class="form-container">
   <h2>Register</h2>
-  <form id="registrationForm" action="/submit_registration" method="POST">
+
+  <form id="registrationForm">
 
     <label for="fullname">Full Name</label>
-    <input type="text" id="fullname" name="fullname" required autocomplete="name">
+    <input type="text" id="fullname" required>
 
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" required autocomplete="email">
+    <input type="email" id="email" required>
 
     <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" 
-           placeholder="Enter 10-digit number" required autocomplete="tel">
+    <input type="tel" id="phone" placeholder="Enter 10-digit number" required>
     <div class="error" id="phoneError"></div>
 
     <label for="password">Password</label>
-    <input type="password" id="password" name="password"
-           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$"
-           title="Minimum 8 characters, at least 1 letter and 1 number"
-           required autocomplete="new-password">
+    <input type="password" id="password" required>
     <span class="toggle-password" onclick="togglePassword('password')">Show Password</span>
 
     <label for="confirm">Confirm Password</label>
-    <input type="password" id="confirm" name="confirm" required autocomplete="new-password">
+    <input type="password" id="confirm" required>
     <span class="toggle-password" onclick="togglePassword('confirm')">Show Password</span>
 
     <div class="error" id="passwordError"></div>
@@ -94,6 +131,15 @@
   </form>
 </div>
 
+<!-- Success Modal -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <h3>Registration Successful!</h3>
+    <p>Your account has been created successfully.</p>
+    <button class="close-btn" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
 <script>
 function togglePassword(fieldId) {
   const field = document.getElementById(fieldId);
@@ -101,6 +147,8 @@ function togglePassword(fieldId) {
 }
 
 document.getElementById("registrationForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
   const password = document.getElementById("password").value;
   const confirm = document.getElementById("confirm").value;
   const phone = document.getElementById("phone").value;
@@ -120,8 +168,15 @@ document.getElementById("registrationForm").addEventListener("submit", function(
     valid = false;
   }
 
-  if (!valid) e.preventDefault();
+  if (valid) {
+    document.getElementById("successModal").style.display = "block";
+    document.getElementById("registrationForm").reset();
+  }
 });
+
+function closeModal() {
+  document.getElementById("successModal").style.display = "none";
+}
 </script>
 
 </body>
